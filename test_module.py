@@ -5,3 +5,4 @@ if __name__ == '__main__':
     print(x)
     print(sorting.bubble_sort(x))
     print(sorting.quick_sort(x))
+    print(sorting.merge_sort(x))

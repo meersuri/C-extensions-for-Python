@@ -40,6 +40,17 @@ static PyObject *sorting_quick_sort(PyObject *self, PyObject *args) {
     return out_list;
 }
 
+static PyObject *sorting_merge_sort(PyObject *self, PyObject *args) {
+    PyObject *list;
+    if (!PyArg_ParseTuple(args, "O", &list))
+        return NULL;
+    int *arr = pylist_to_int_array(list);
+    Py_ssize_t len = PyList_Size(list);
+    merge_sort(arr, len);
+    PyObject *out_list = int_array_to_pylist(arr, len);
+    return out_list;
+}
+
 static PyMethodDef sortingMethods[] = {
     {
         "bubble_sort",
@@ -52,6 +63,12 @@ static PyMethodDef sortingMethods[] = {
         sorting_quick_sort,
         METH_VARARGS,
         "Sort using Quick sort algorithm"
+    },
+    {
+        "merge_sort",
+        sorting_merge_sort,
+        METH_VARARGS,
+        "Sort using the Merge sort algorithm"
     },
     {NULL, NULL, 0, NULL}
 };

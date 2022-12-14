@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 
 // 3,4,1,5
 // 3,1,4,5
@@ -38,7 +39,7 @@ int partition(int *arr, int p, int q) {
     return idx;
 }
 
-void qsort(int *arr, int p, int q) {
+void myqsort(int *arr, int p, int q) {
     // 4,3,2,1
     // 1,3,2,4
     // 1,3,2,4
@@ -48,20 +49,52 @@ void qsort(int *arr, int p, int q) {
     if (p == q - 1)
         return;
     int idx = partition(arr, p, q);
-    qsort(arr, p, idx);
-    qsort(arr, idx + 1, q);
+    myqsort(arr, p, idx);
+    myqsort(arr, idx + 1, q);
 }
 
 void quick_sort(int *arr, int len) {
-    qsort(arr, 0, len);
+    myqsort(arr, 0, len);
 }
 
+void msort(int *arr, int left, int right) {
+    if (right <= left)
+        return;
+    int mid = left + (right - left)/2;
+    msort(arr, left, mid);
+    msort(arr, mid + 1, right);
+    int size = right - left + 1;
+    int *sorted = (int *) (malloc(sizeof(int)*size));
+    int p = left, q = mid + 1;
+    int curr = 0;
+    while (curr < size) {
+        if (p <= mid && q <= right) {
+            if (arr[p] < arr[q])
+                sorted[curr++] = arr[p++];
+            else
+                sorted[curr++] = arr[q++];
+        }
+        else if (p <= mid)
+            sorted[curr++] = arr[p++];
+        else
+            sorted[curr++] = arr[q++];
+    }
+
+    for (int i = 0; i < size; ++i)
+        arr[left + i] = sorted[i];
+
+    return;
+}
+
+void merge_sort(int *arr, int len) {
+    msort(arr, 0, len - 1);
+}
 
 int main(int argc, const char **argv) {
-    int arr[] = {4,3,2,1};
-    int n = 4;
+    int arr[] = {4,3,2,1,3,4,1,2};
+    int n = 8;
     print_arr(arr, n);
-    quick_sort(arr, n);
+    merge_sort(arr, n);
     print_arr(arr, n);
     return 0;
 }
