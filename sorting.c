@@ -90,11 +90,36 @@ void merge_sort(int *arr, int len) {
     msort(arr, 0, len - 1);
 }
 
+void count_sort(int *arr, int len) {
+    int min_val = arr[0], max_val = arr[0];
+    for (int i = 0; i < len; ++i) {
+        min_val = arr[i] < min_val ? arr[i] : min_val;
+        max_val = arr[i] > max_val ? arr[i] : max_val;
+    }
+    int offset = -min_val;
+    int range = max_val - min_val + 1;
+    int *counts = (int *) malloc(sizeof(int) * range);
+    for (int i = 0; i < range; ++i)
+        counts[i] = 0;
+    for (int i = 0; i < len; ++i)
+        counts[arr[i] + offset]++;
+    int c = range - 1, i = len - 1;
+    while (i >= 0) {
+        if (counts[c] == 0)
+            --c;
+        else {
+            arr[i--] = c - offset;
+            --counts[c];
+        }
+    }
+    free(counts);
+}
+
 int main(int argc, const char **argv) {
     int arr[] = {4,3,2,1,3,4,1,2};
     int n = 8;
     print_arr(arr, n);
-    merge_sort(arr, n);
+    count_sort(arr, n);
     print_arr(arr, n);
     return 0;
 }

@@ -51,6 +51,17 @@ static PyObject *sorting_merge_sort(PyObject *self, PyObject *args) {
     return out_list;
 }
 
+static PyObject *sorting_count_sort(PyObject *self, PyObject *args) {
+    PyObject *list;
+    if (!PyArg_ParseTuple(args, "O", &list))
+        return NULL;
+    int *arr = pylist_to_int_array(list);
+    Py_ssize_t len = PyList_Size(list);
+    count_sort(arr, len);
+    PyObject *out_list = int_array_to_pylist(arr, len);
+    return out_list;
+}
+
 static PyMethodDef sortingMethods[] = {
     {
         "bubble_sort",
@@ -69,6 +80,12 @@ static PyMethodDef sortingMethods[] = {
         sorting_merge_sort,
         METH_VARARGS,
         "Sort using the Merge sort algorithm"
+    },
+    {
+        "count_sort",
+        sorting_count_sort,
+        METH_VARARGS,
+        "Sort using the Counting sort algorithm"
     },
     {NULL, NULL, 0, NULL}
 };
