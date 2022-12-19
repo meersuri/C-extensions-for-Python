@@ -64,7 +64,7 @@ void msort(int *arr, int left, int right) {
     msort(arr, left, mid);
     msort(arr, mid + 1, right);
     int size = right - left + 1;
-    int *sorted = (int *) (malloc(sizeof(int)*size));
+    int *sorted = (int*) calloc(size, sizeof(int));
     int p = left, q = mid + 1;
     int curr = 0;
     while (curr < size) {
@@ -83,6 +83,7 @@ void msort(int *arr, int left, int right) {
     for (int i = 0; i < size; ++i)
         arr[left + i] = sorted[i];
 
+    free(sorted);
     return;
 }
 
@@ -98,9 +99,7 @@ void count_sort(int *arr, int len) {
     }
     int offset = -min_val;
     int range = max_val - min_val + 1;
-    int *counts = (int *) malloc(sizeof(int) * range);
-    for (int i = 0; i < range; ++i)
-        counts[i] = 0;
+    int *counts = (int*) calloc(range, sizeof(int));
     for (int i = 0; i < len; ++i)
         counts[arr[i] + offset]++;
     int c = range - 1, i = len - 1;
