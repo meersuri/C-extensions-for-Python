@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
+#include <assert.h>
 
 // 3,4,1,5
 // 3,1,4,5
@@ -114,11 +116,76 @@ void count_sort(int *arr, int len) {
     free(counts);
 }
 
+int count_digits(int x) {
+    if (x == 0)
+        return 1;
+    int count = 0;
+    while (x > 0) {
+        count++;
+        x = x/10;
+    }
+    return count;
+}
+
+int get_digit(int x, int idx) {
+    assert(x >= 0);
+    int i = -1, digit = 0;
+    do {
+        digit = x % 10;
+        x = x/10;
+    }
+    while (++i != idx);
+    return digit;
+}
+
+void bsort(int*arr, int len, int digit_idx) {
+    if (digit_idx < 0 || len == 0)
+        return;
+    int *buckets[10];
+    int bucket_lens[10];
+    for (int i = 0; i < 10; ++i) {
+        buckets[i] = (int *) malloc(len*sizeof(int));
+        bucket_lens[i] = 0;
+    }
+    for (int i = 0; i < len; ++i) {
+        int digit = get_digit(arr[i], digit_idx);
+        buckets[digit][bucket_lens[digit]++] = arr[i];
+    }
+    for (int i = 0; i < 10; ++i)
+        bsort(buckets[i], bucket_lens[i], digit_idx - 1);
+
+    int out_idx = 0;
+    for (int i = 0; i < 10; ++i) {
+        for (int j = 0; j < bucket_lens[i]; ++j)
+            arr[out_idx++] = buckets[i][j];
+    }
+    for (int i = 0; i < 10; ++i)
+        free(buckets[i]);
+    return;
+}
+
+void bucket_sort(int* arr, int len) {
+    int min = arr[0], max = arr[0];
+    for (int i = 0; i < len; ++i) {
+        min = arr[i] < min ? arr[i]: min;
+        max = arr[i] > max ? arr[i]: max;
+    }
+    int offset = min < 0 ? -min : 0;
+    for (int i = 0; i < len; ++i)
+        arr[i] += offset;
+    max += offset;
+    int max_digits = count_digits(max);
+    bsort(arr, len, max_digits - 1);
+    for (int i = 0; i < len; ++i)
+        arr[i] -= offset;
+
+}
+
 int main(int argc, const char **argv) {
-    int arr[] = {4,3,2,1,3,4,1,2};
-    int n = 8;
+    int arr[] = {14,23,122,-11,1,3,34,1,-1,102,59, -103};
+    int n = 12;
     print_arr(arr, n);
-    count_sort(arr, n);
+    bucket_sort(arr, n);
     print_arr(arr, n);
     return 0;
 }
